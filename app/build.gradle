@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'kr.tetherwatch'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'kr.tetherwatch'
+        minSdk 26
+        // 갤럭시 노트9(안드로이드 10)에 맞춤. 숨김 API(핫스팟 상태) 사용과 백그라운드 제한 회피를 위해 29로 고정.
+        targetSdk 29
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // 같은 키로 서명해야 나중에 새 버전을 덮어 설치할 수 있다.
+    // 키 파일(app/tetherwatch.jks)과 비밀번호는 저장소에 올리지 않는다.
+    //   - 내 PC: local.properties 의 signing.password
+    //   - GitHub: Secrets 의 KEYSTORE_BASE64, KEYSTORE_PASSWORD
+    def localProps = new Properties()
+    def localFile = rootProject.file('local.properties')
+    if (localFile.exists()) localFile.withInputStream { localProps.load(it) }
+    def keyFile = file('tetherwatch.jks')
+    def storePass = System.getenv('KEYSTORE_PASSWORD') ?: localProps.getProperty('signing.password')
+    def canSign = keyFile.exists() && storePass
+
+    signingConfigs {
+        release {
+            if (canSign) {
+                storeFile keyFile
+                storePassword storePass
+                keyAlias 'tetherwatch'
+                keyPassword storePass
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (canSign) signingConfig signingConfigs.release
+        }
+        debug {
+            if (canSign) signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        encoding 'UTF-8'
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}

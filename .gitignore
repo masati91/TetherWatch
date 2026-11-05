@@ -1,0 +1,16 @@
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# 서명 키는 GitHub Secrets 로 관리 (저장소에 올리지 않음)
+*.jks
+*.keystore
+
+# 이 프로젝트와 무관한 로컬 파일
+vscode_context_menu.reg
+.github/modernize/
+.vscode/
