@@ -54,6 +54,7 @@ public class SmsReceiver extends BroadcastReceiver {
         if (t.equals("#알림끔")) return "off";
         if (t.equals("#알림켬")) return "on";
         if (t.equals("#도움")) return "help";
+        if (t.equals("#진단")) return "diag";
         return null;
     }
 
@@ -72,8 +73,11 @@ public class SmsReceiver extends BroadcastReceiver {
                 Prefs.setAlertsOn(c, true);
                 reply = "자동알림 켜짐";
                 break;
+            case "diag":
+                reply = "핫스팟진단 " + StatusCollector.probeHotspot(c).summary();
+                break;
             default:
-                reply = "명령: " + Prefs.keyword(c) + " #알림켬 #알림끔";
+                reply = "명령: " + Prefs.keyword(c) + " #알림켬 #알림끔 #진단";
                 break;
         }
         SmsSender.send(c, sender, reply);

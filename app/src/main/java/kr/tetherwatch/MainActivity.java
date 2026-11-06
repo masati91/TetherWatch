@@ -178,10 +178,12 @@ public class MainActivity extends Activity {
         new Thread(new Runnable() {
             @Override public void run() {
                 final String sms = StatusCollector.collect(MainActivity.this).toSms();
+                final String diag = StatusCollector.probeHotspot(MainActivity.this).summary();
                 runOnUiThread(new Runnable() {
                     @Override public void run() {
                         preview.setText(sms + "\n\n(" + sms.length() + "자 · " + Status.byteLen(sms)
-                                + "바이트 / 단문 한도 " + Status.MAX_CHARS + "자 · " + Status.MAX_BYTES + "바이트)");
+                                + "바이트 / 단문 한도 " + Status.MAX_CHARS + "자 · " + Status.MAX_BYTES + "바이트)"
+                                + "\n\n핫스팟 진단: " + diag);
                     }
                 });
             }
