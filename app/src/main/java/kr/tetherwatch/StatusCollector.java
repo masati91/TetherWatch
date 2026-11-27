@@ -72,6 +72,20 @@ final class StatusCollector {
                     || (apIfaces != null && !apIfaces.isEmpty());
         }
 
+        /** USB 테더링 (rndis0, ncm0, usb0). 테더링 목록을 못 읽으면 null. */
+        Boolean usbOn() {
+            if (tethered == null) return null;
+            for (String n : tethered) if (isUsbTether(n)) return true;
+            return false;
+        }
+
+        /** 블루투스 테더링 (bt-pan). 테더링 목록을 못 읽으면 null. */
+        Boolean btOn() {
+            if (tethered == null) return null;
+            for (String n : tethered) if (n != null && n.startsWith("bt")) return true;
+            return false;
+        }
+
         boolean anyKnown() {
             return apiEnabled != null || apiState >= 0 || broadcastState >= 0
                     || tethered != null || apIfaces != null;
@@ -135,6 +149,12 @@ final class StatusCollector {
         if (p.wifiOn()) s.hotspotOn = true;
         else if (p.anyKnown()) s.hotspotOn = false;
         if (Boolean.TRUE.equals(s.hotspotOn)) s.clients = countClients(apIfaceNames(p));
+        s.usbTether = p.usbOn();
+        s.btTether = p.btOn();
+    }
+
+    private static boolean isUsbTether(String name) {
+        return name != null && (name.startsWith("rndis") || name.startsWith("ncm") || name.startsWith("usb"));
     }
 
     /** 핫스팟 전용 인터페이스 이름 (wlan0은 일반 와이파이 연결이라 빼야 한다). */

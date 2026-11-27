@@ -12,6 +12,8 @@ final class Status {
 
     Boolean hotspotOn;          // null = 알 수 없음
     Integer clients;            // null = 알 수 없음
+    Boolean usbTether;          // USB 테더링. null = 알 수 없음
+    Boolean btTether;           // 블루투스 테더링. null = 알 수 없음
     boolean airplane;
     boolean simReady = true;
     String netType = "?";
@@ -38,6 +40,9 @@ final class Status {
 
         add(texts, drops, hotspotOn == null ? "핫스팟?" : (hotspotOn ? "핫스팟ON" : "핫스팟OFF"), 0);
         if (Boolean.TRUE.equals(hotspotOn) && clients != null) add(texts, drops, "연결" + clients, 2);
+        // USB·블루투스 테더링은 켜져 있을 때만 표시 (문자 길이를 아끼려고)
+        if (Boolean.TRUE.equals(usbTether)) add(texts, drops, "USB테더링ON", 0);
+        if (Boolean.TRUE.equals(btTether)) add(texts, drops, "BT테더링ON", 0);
 
         if (airplane) add(texts, drops, "비행기모드", 0);
         else if (!simReady) add(texts, drops, "유심오류", 0);
