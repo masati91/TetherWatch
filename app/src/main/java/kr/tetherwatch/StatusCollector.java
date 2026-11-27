@@ -146,11 +146,13 @@ final class StatusCollector {
 
     private static void readHotspot(Context c, Status s) {
         HotspotProbe p = probeHotspot(c);
-        if (p.wifiOn()) s.hotspotOn = true;
+        // 와이파이 핫스팟, USB 테더링, 블루투스 테더링 중 하나라도 켜져 있으면 "핫스팟ON"
+        boolean wifi = p.wifiOn();
+        boolean any = wifi || Boolean.TRUE.equals(p.usbOn()) || Boolean.TRUE.equals(p.btOn());
+        if (any) s.hotspotOn = true;
         else if (p.anyKnown()) s.hotspotOn = false;
-        if (Boolean.TRUE.equals(s.hotspotOn)) s.clients = countClients(apIfaceNames(p));
-        s.usbTether = p.usbOn();
-        s.btTether = p.btOn();
+        // 연결 기기 수는 와이파이 핫스팟일 때만 센다
+        if (wifi) s.clients = countClients(apIfaceNames(p));
     }
 
     private static boolean isUsbTether(String name) {
